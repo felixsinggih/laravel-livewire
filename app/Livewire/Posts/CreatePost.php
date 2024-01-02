@@ -4,6 +4,7 @@ namespace App\Livewire\Posts;
 
 use App\Models\Post;
 use Livewire\Attributes\Rule;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -24,7 +25,8 @@ class CreatePost extends Component
     #[Rule('required|min:3')]
     public $title;
 
-    #[Rule('required|min:3')]
+    // * as digunakan untuk mengganti pesan error
+    #[Rule('required|min:3', as: 'post content')]
     public $content;
 
     #[Rule('in:0,1')]
@@ -36,10 +38,17 @@ class CreatePost extends Component
     #[Rule('nullable|sometimes|image|max:1024')]
     public $featured_image;
 
+    // * menambahkan query parameter
+    // * use Livewire\Attributes\Url;
+    // * as : 's' jika ingin mengganti nama query parameter
+    // * history : true jika ingin mengaktifkan history, default false
+    #[Url(as: 's', history: true)]
     public $search;
 
     public function newPost()
     {
+        sleep(3);
+
         // * validate hanya satu field
         // $validated = $this->validateOnly('title');
 

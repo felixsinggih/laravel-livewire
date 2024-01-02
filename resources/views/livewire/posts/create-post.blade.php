@@ -1,12 +1,21 @@
 <div>
     @if (session('success'))
-        <div class="row">
+        <div id="flash-message" class="row">
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
     @endif
+
+    {{-- wire:offline digunakan untuk menampilkan elemen jika koneksi internet terputus --}}
+    <div wire:offline>
+        <div id="offline-warning" class="row">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                You're offline. Please check your internet connection.
+            </div>
+        </div>
+    </div>
 
     {{--
         wire:poll digunakan untuk mengaktifkan fitur polling, misalnya untuk menampilkan data secara realtime
@@ -15,7 +24,12 @@
         wire:poll.keep-alive digunakan untuk menjaga polling tetap berjalan meskipun ada perubahan pada komponen lain
         wire:poll.visible digunakan untuk menjalankan polling hanya ketika komponen terlihat
     --}}
-    <div wire:poll.5s class="row">
+    {{--
+        wire.poll dinonaktikan karena mengganggu loading state
+        jika diaktikan akan mengakibatkan loading state selalu berjalan ketika melakukan wire:model pada suatu elemen
+    --}}
+    {{-- <div wire:poll.5s class="row"> --}}
+    <div class="row">
         <div class="col-md-6">
             <div id="post-create">
                 <form wire:submit="newPost">
@@ -65,6 +79,11 @@
                                 {{ $message }}
                             </div>
                         @enderror
+
+                        {{-- menampilkan loading state gambar yang diupload --}}
+                        <div wire:loading wire:target="featured_image">
+                            <span class="text-primary">Uploading image...</span>
+                        </div>
                     </div>
 
                     <div class="mb-3 form-check">
@@ -78,7 +97,24 @@
                         @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    {{--
+                        wire:loading.attr digunakan untuk menambahkan atribut pada suatu elemen ketika proses loading
+                        wire:loading.remove digunakan untuk menghapus suatu elemen ketika proses loading
+
+                        secara otomatis walau tanpa menambahkan wire:loading.attr jika tombol berada di dalam form
+                        maka secara otomatis tombol akan dinonaktifkan ketika proses submit form
+                    --}}
+                    <button wire:loading.attr="disabled" type="submit" class="btn btn-primary">Submit</button>
+
+                    {{--
+                        menampilkan loading state ketika proses submit form
+                        delay digunakan untuk menunda loading state selama 200ms
+                        wire:loading.delay.longer
+                        masih banyak parameter lain yang bisa digunakan untuk wire:loading
+                    --}}
+                    <div wire:loading.delay>
+                        <span class="text-primary">Sending data...</span>
+                    </div>
                 </form>
             </div>
         </div>
